@@ -1,21 +1,33 @@
 package ru.practicum.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import ru.practicum.StatsClient;
 
+import java.time.Duration;
+
 @Configuration
 public class AppConfig {
 
     @Bean
-    public ru.practicum.StatsClient statsClient(@Value("${stats-server.url:http://localhost:9090}") String serverUrl) {
-        RestClient restClient = RestClient.builder()
-                .baseUrl(serverUrl)
-                .requestFactory(new SimpleClientHttpRequestFactory())
+    @LoadBalanced
+    public RestClient.Builder loadBalancedRestClientBuilder() {
+        return RestClient.builder();
+    }
+
+    @Bean
+    public ru.practicum.StatsClient statsClient(@LoadBalanced RestClient.Builder restClientBuilder) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
+        requestFactory.setReadTimeout((int) Duration.ofSeconds(5).toMillis());
+
+        RestClient restClient = restClientBuilder
+                .baseUrl("http://stats-server")
+                .requestFactory(requestFactory)
                 .build();
-        return new StatsClient(serverUrl, restClient);
+        return new StatsClient(restClient);
     }
 }

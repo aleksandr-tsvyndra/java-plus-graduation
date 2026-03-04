@@ -35,5 +35,8 @@ logging:
       hibernate:
         SQL: DEBUG
         type.descriptor.sql: TRACE
-      zalando:
-        logbook: TRACE
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
