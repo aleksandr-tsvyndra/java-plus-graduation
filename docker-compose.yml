@@ -39,6 +39,17 @@ services:
     depends_on:
       - discovery-server
 
+  gateway-server:
+    image: eclipse-temurin:21-jdk-alpine
+    container_name: gateway-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./infra/gateway-server/target/gateway-server-0.0.1-SNAPSHOT.jar:/app.jar
+    command: java -jar /app.jar
+    depends_on:
+      - config-server
+
   stats-server:
     image: eclipse-temurin:21-jdk-alpine
     container_name: stats-server
