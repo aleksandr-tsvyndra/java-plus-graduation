@@ -1,36 +1,17 @@
 spring:
-  sql:
-    init:
-      mode: always
-  jpa:
-    hibernate:
-      ddl-auto: none
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/main
-    username: dbuser
-    password: 12345
-
-logging:
-  level:
-    ru:
-      practicum:
-        explorewithme: DEBUG
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-
-stats-server:
-  url: http://localhost:9090/
-
-server:
-  port: 8081
+  application:
+    name: main-service
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        useRandomPolicy: true
+        max-interval: 6000
+      discovery:
+        enabled: true
+        serviceId: config-server
 
 eureka:
   client:
