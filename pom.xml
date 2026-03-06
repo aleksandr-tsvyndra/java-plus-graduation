@@ -16,7 +16,8 @@
 	<modules>
 		<module>stats</module>
 		<module>core</module>
-	</modules>
+        <module>infra</module>
+    </modules>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
@@ -34,6 +35,9 @@
 		<lombok.version>1.18.32</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<jakarta.validation.version>3.0.2</jakarta.validation.version>
+
+		<!-- Spring Cloud versions -->
+		<spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
 
 		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
@@ -109,6 +113,13 @@
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct-processor</artifactId>
 				<version>${mapstruct.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: stats-server
+    name: gateway-server
   config:
     import: "configserver:"
   cloud:
@@ -8,7 +8,6 @@ spring:
       fail-fast: true
       retry:
         useRandomPolicy: true
-        max-interval: 6000
       discovery:
         enabled: true
         serviceId: config-server

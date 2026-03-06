@@ -6,8 +6,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-public class MainServiceApp {
+public class GatewayServer {
     public static void main(String[] args) {
-        SpringApplication.run(MainServiceApp.class, args);
+        SpringApplication.run(GatewayServer.class, args);
     }
 }

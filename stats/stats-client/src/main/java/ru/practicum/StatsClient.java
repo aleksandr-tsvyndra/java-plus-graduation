@@ -1,12 +1,9 @@
 package ru.practicum;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -14,22 +11,16 @@ import java.util.StringJoiner;
 
 @Slf4j
 public class StatsClient {
-    private final String serverUrl;
     private final RestClient restClient;
 
-    public StatsClient(@Value("${stats-server.url:http://localhost:9090}") String serverUrl, RestClient restClient) {
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
-        requestFactory.setReadTimeout((int) Duration.ofSeconds(5).toMillis());
-        this.serverUrl = serverUrl;
+    public StatsClient(RestClient restClient) {
         this.restClient = restClient;
     }
 
     public void hit(EndpointHitDto endpointHitDto) {
-        String url = serverUrl + "/hit";
         try {
             restClient.post()
-                    .uri(url)
+                    .uri("/hit")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(endpointHitDto)
                     .retrieve()
@@ -49,12 +40,11 @@ public class StatsClient {
         }
 
         String url = String.format(
-                "%s/stats?start=%s&end=%s&unique=%s&uris=%s",
-                serverUrl,
+                "/stats?start=%s&end=%s&unique=%s&uris=%s",
                 start.format(formatter),
                 end.format(formatter),
                 unique,
-                uriJoiner.toString()
+                uriJoiner
         );
 
         try {
