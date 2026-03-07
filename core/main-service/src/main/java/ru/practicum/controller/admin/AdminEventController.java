@@ -1,12 +1,9 @@
 package ru.practicum.controller.admin;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.api.event.AdminEventApi;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
 import ru.practicum.service.event.EventService;
@@ -14,29 +11,27 @@ import ru.practicum.service.event.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/admin/events")
 @RequiredArgsConstructor
-public class AdminEventController {
+public class AdminEventController implements AdminEventApi {
     private final EventService eventService;
 
-    @GetMapping
+    @Override
     public List<EventFullDto> getEvents(
-            @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false) List<String> states,
-            @RequestParam(required = false) List<Long> categories,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            List<Long> users,
+            List<String> states,
+            List<Long> categories,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            int from,
+            int size
+    ) {
         return eventService.getEventsForAdmin(users, states, categories, rangeStart, rangeEnd,
                 PageRequest.of(from / size, size));
     }
 
-    @PatchMapping("/{eventId}")
-    public EventFullDto updateEvent(@PathVariable @Positive Long eventId,
-                                    @RequestBody @Valid UpdateEventAdminRequest updateRequest) {
+    @Override
+    public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateRequest) {
         return eventService.updateEventByAdmin(eventId, updateRequest);
     }
 }

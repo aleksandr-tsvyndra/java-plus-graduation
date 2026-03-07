@@ -1,20 +1,9 @@
 package ru.practicum.controller.privates;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.api.review.PrivateReviewApi;
 import ru.practicum.dto.review.NewReviewDto;
 import ru.practicum.dto.review.ReviewDto;
 import ru.practicum.dto.review.UpdateReviewDto;
@@ -23,46 +12,37 @@ import ru.practicum.service.review.PrivateReviewService;
 import java.util.List;
 
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}/reviews")
-public class PrivateReviewController {
+public class PrivateReviewController implements PrivateReviewApi {
     private final PrivateReviewService reviewService;
 
-    @PostMapping("/events/{eventId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ReviewDto addReview(@Positive @PathVariable Long userId,
-                               @Positive @PathVariable Long eventId,
-                               @RequestBody @Valid NewReviewDto dto) {
+    @Override
+    public ReviewDto addReview(Long userId, Long eventId, NewReviewDto dto) {
         log.info("POST-запрос на добавление отзыва к ивенту с id={}", eventId);
         return reviewService.addReview(userId, eventId, dto);
     }
 
-    @PatchMapping("/{reviewId}")
-    public ReviewDto updateReview(@Positive @PathVariable Long userId,
-                                  @Positive @PathVariable Long reviewId,
-                                  @RequestBody @Valid UpdateReviewDto dto) {
+    @Override
+    public ReviewDto updateReview(Long userId, Long reviewId, UpdateReviewDto dto) {
         log.info("PATCH-запрос на обновление отзыва с id={}", reviewId);
         return reviewService.updateReview(userId, reviewId, dto);
     }
 
-    @DeleteMapping("/{reviewId}/events/{eventId}")
-    public void deleteReviewByAuthor(@Positive @PathVariable Long userId,
-                                     @Positive @PathVariable Long reviewId) {
+    @Override
+    public void deleteReviewByAuthor(Long userId, Long reviewId) {
         log.info("DELETE-запрос на удаление автором отзыва с id={}", reviewId);
         reviewService.deleteReviewByAuthor(userId, reviewId);
     }
 
-    @GetMapping("/{reviewId}")
-    public ReviewDto getReviewById(@Positive @PathVariable Long userId,
-                                   @Positive @PathVariable Long reviewId) {
+    @Override
+    public ReviewDto getReviewById(Long userId, Long reviewId) {
         log.info("GET-запрос на просмотр автором отзыва с id={}", reviewId);
         return reviewService.getReviewById(userId, reviewId);
     }
 
-    @GetMapping
-    public List<ReviewDto> getReviewsByAuthor(@Positive @PathVariable Long userId) {
+    @Override
+    public List<ReviewDto> getReviewsByAuthor(Long userId) {
         log.info("GET-запрос на просмотр всех отзывов автором с id={}", userId);
         return reviewService.getReviewsByAuthor(userId);
     }

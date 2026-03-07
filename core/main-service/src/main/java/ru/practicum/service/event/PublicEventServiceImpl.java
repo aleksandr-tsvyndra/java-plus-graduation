@@ -11,7 +11,7 @@ import ru.practicum.StatResponseDto;
 import ru.practicum.StatsClient;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.enums.EventState;
+import ru.practicum.dto.enums.EventState;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.mapper.EventMapper;

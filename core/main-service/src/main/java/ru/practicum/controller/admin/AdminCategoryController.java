@@ -1,46 +1,37 @@
 package ru.practicum.controller.admin;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.api.category.AdminCategoryApi;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.service.category.CategoryService;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/admin/categories")
 @RequiredArgsConstructor
-public class AdminCategoryController {
+public class AdminCategoryController implements AdminCategoryApi {
     private final CategoryService categoryService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto createCategory(@RequestBody @Valid NewCategoryDto newCategoryDto) {
+    @Override
+    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
         return categoryService.createCategory(newCategoryDto);
     }
 
-    @DeleteMapping("/{catId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable @Positive Long catId) {
+    @Override
+    public void deleteCategory(Long catId) {
         categoryService.deleteCategory(catId);
     }
 
-    @PatchMapping("/{catId}")
-    public CategoryDto updateCategory(@PathVariable @Positive Long catId,
-                                      @RequestBody @Valid CategoryDto categoryDto) {
+    @Override
+    public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
         return categoryService.updateCategory(catId, categoryDto);
     }
 
-    @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") int from,
-                                           @RequestParam(defaultValue = "10") int size) {
+    @Override
+    public List<CategoryDto> getCategories(int from, int size) {
         return categoryService.getCategories(PageRequest.of(from / size, size));
     }
 }

@@ -1,30 +1,26 @@
 package ru.practicum.controller.publics;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.api.category.PublicCategoryApi;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.service.category.CategoryService;
 
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/categories")
 @RequiredArgsConstructor
-public class PublicCategoryController {
+public class PublicCategoryController implements PublicCategoryApi {
     private final CategoryService categoryService;
 
-    @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") int from,
-                                           @RequestParam(defaultValue = "10") int size) {
+    @Override
+    public List<CategoryDto> getCategories(int from, int size) {
         return categoryService.getCategories(PageRequest.of(from / size, size));
     }
 
-    @GetMapping("/{catId}")
-    public CategoryDto getCategoryById(@PathVariable @Positive Long catId) {
+    @Override
+    public CategoryDto getCategoryById(Long catId) {
         return categoryService.getCategoryById(catId);
     }
 }

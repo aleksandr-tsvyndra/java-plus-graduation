@@ -1,7 +1,6 @@
 package ru.practicum.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -52,7 +51,7 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
+    @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handlerValidationException(Exception e) {
         log.debug("Получен статус 409 CONFLICT {}", e.getMessage());

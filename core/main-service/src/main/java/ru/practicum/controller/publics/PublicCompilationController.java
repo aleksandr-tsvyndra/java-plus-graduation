@@ -1,31 +1,26 @@
 package ru.practicum.controller.publics;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.api.compilation.PublicCompilationApi;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.service.compilation.CompilationService;
 
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/compilations")
 @RequiredArgsConstructor
-public class PublicCompilationController {
+public class PublicCompilationController implements PublicCompilationApi {
     private final CompilationService compilationService;
 
-    @GetMapping
-    public List<CompilationDto> getCompilations(@RequestParam(required = false) Boolean pinned,
-                                                @RequestParam(defaultValue = "0") int from,
-                                                @RequestParam(defaultValue = "10") int size) {
+    @Override
+    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
         return compilationService.getCompilations(pinned, PageRequest.of(from / size, size));
     }
 
-    @GetMapping("/{compId}")
-    public CompilationDto getCompilationById(@PathVariable @Positive Long compId) {
+    @Override
+    public CompilationDto getCompilationById(Long compId) {
         return compilationService.getCompilationById(compId);
     }
 }

@@ -1,53 +1,44 @@
 package ru.practicum.controller.privates;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.api.request.PrivateRequestApi;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.dto.request.ParticipationRequestDto;
 import ru.practicum.service.request.RequestService;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
-@Validated
 @RestController
-@RequestMapping("/users/{userId}")
 @RequiredArgsConstructor
-public class PrivateRequestController {
+public class PrivateRequestController implements PrivateRequestApi {
     private final RequestService participationRequestService;
 
-    @GetMapping("/events/{eventId}/requests")
-    public List<ParticipationRequestDto> getEventRequests(@PathVariable @Positive Long userId,
-                                                          @PathVariable @Positive Long eventId) {
+    @Override
+    public List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId) {
         return participationRequestService.getEventRequests(userId, eventId);
     }
 
-    @PatchMapping("/events/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateRequestStatus(@PathVariable @Positive Long userId,
-                                                              @PathVariable @Positive Long eventId,
-                                                              @RequestBody @Valid EventRequestStatusUpdateRequest updateRequest) {
+    @Override
+    public EventRequestStatusUpdateResult updateRequestStatus(Long userId,
+                                                              Long eventId,
+                                                              EventRequestStatusUpdateRequest updateRequest) {
         return participationRequestService.updateRequestStatus(userId, eventId, updateRequest);
     }
 
-    @GetMapping("/requests")
-    public List<ParticipationRequestDto> getUserRequests(@PathVariable @Positive Long userId) {
+    @Override
+    public List<ParticipationRequestDto> getUserRequests(Long userId) {
         return participationRequestService.getUserRequests(userId);
     }
 
-    @PostMapping("/requests")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto createRequest(@PathVariable @Positive Long userId,
-                                                 @RequestParam @Positive Long eventId) {
+    @Override
+    public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         return participationRequestService.createRequest(userId, eventId);
     }
 
-    @PatchMapping("/requests/{requestId}/cancel")
-    public ParticipationRequestDto cancelRequest(@PathVariable @Positive Long userId,
-                                                 @PathVariable @Positive Long requestId) {
+    @Override
+    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         return participationRequestService.cancelRequest(userId, requestId);
     }
 }

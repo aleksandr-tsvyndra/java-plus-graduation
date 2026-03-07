@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.enums.RequestStatus;
+import ru.practicum.dto.enums.RequestStatus;
 import ru.practicum.model.Event;
 import ru.practicum.model.ParticipationRequest;
 import ru.practicum.model.User;
