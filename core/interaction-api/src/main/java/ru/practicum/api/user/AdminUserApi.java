@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.practicum.dto.user.NewUserRequest;
 import ru.practicum.dto.user.UserDto;
+import ru.practicum.dto.user.UserShortDto;
 
 import java.util.List;
 
@@ -33,5 +34,11 @@ public interface AdminUserApi {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteUser(@PathVariable @Positive Long userId);
+
+    @GetMapping("/{userId}")
+    UserDto getUserById(@PathVariable @Positive Long userId);
+
+    @GetMapping("/client/{userId}")
+    UserShortDto getUserShortDtoById(@PathVariable @Positive Long userId);
 
 }

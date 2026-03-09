@@ -14,6 +14,7 @@ import ru.practicum.dto.event.EventShortDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Validated
 @RequestMapping("/events")
@@ -36,4 +37,18 @@ public interface PublicEventApi {
     EventFullDto getEventById(@PathVariable @Positive Long id,
                               HttpServletRequest httpRequest);
 
+    @GetMapping("/client/validate/category/{categoryId}")
+    void validateCategoryHasNoEvents(@PathVariable @Positive Long categoryId);
+
+    @GetMapping("/client/find/all")
+    Set<EventShortDto> getEventShortDtoSetByIds(@RequestParam Set<Long> eventIds);
+
+    @GetMapping("/client/short/{id}")
+    EventShortDto getEventShortDtoByIdClient(@PathVariable @Positive Long id);
+
+    @GetMapping("/client/full/{id}")
+    EventFullDto getEventFullDtoByIdClient(@PathVariable @Positive Long id);
+
+    @GetMapping("/client/validate/{eventId}")
+    void validateEventExistingById(@PathVariable @Positive Long eventId);
 }

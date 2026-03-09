@@ -1,0 +1,27 @@
+server:
+  port: 0
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/main
+    username: dbuser
+    password: 12345
+
+logging:
+  level:
+    ru:
+      practicum:
+        explorewithme: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
