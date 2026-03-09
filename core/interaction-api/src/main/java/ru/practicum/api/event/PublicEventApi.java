@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
@@ -17,10 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 @Validated
-@RequestMapping("/events")
 public interface PublicEventApi {
 
-    @GetMapping
+    @GetMapping("/events")
     List<EventShortDto> getEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
@@ -33,22 +31,22 @@ public interface PublicEventApi {
             @Positive @RequestParam(defaultValue = "10") int size,
             HttpServletRequest httpRequest);
 
-    @GetMapping("/{id}")
+    @GetMapping("/events/{id}")
     EventFullDto getEventById(@PathVariable @Positive Long id,
                               HttpServletRequest httpRequest);
 
-    @GetMapping("/client/validate/category/{categoryId}")
+    @GetMapping("/events/client/validate/category/{categoryId}")
     void validateCategoryHasNoEvents(@PathVariable @Positive Long categoryId);
 
-    @GetMapping("/client/find/all")
+    @GetMapping("/events/client/find/all")
     Set<EventShortDto> getEventShortDtoSetByIds(@RequestParam Set<Long> eventIds);
 
-    @GetMapping("/client/short/{id}")
+    @GetMapping("/events/client/short/{id}")
     EventShortDto getEventShortDtoByIdClient(@PathVariable @Positive Long id);
 
-    @GetMapping("/client/full/{id}")
+    @GetMapping("/events/client/full/{id}")
     EventFullDto getEventFullDtoByIdClient(@PathVariable @Positive Long id);
 
-    @GetMapping("/client/validate/{eventId}")
+    @GetMapping("/events/client/validate/{eventId}")
     void validateEventExistingById(@PathVariable @Positive Long eventId);
 }

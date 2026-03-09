@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
@@ -17,10 +16,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Validated
-@RequestMapping("/admin/events")
 public interface AdminEventApi {
 
-    @GetMapping
+    @GetMapping("/admin/events")
     List<EventFullDto> getEvents(
             @RequestParam(required = false) List<Long> users,
             @RequestParam(required = false) List<String> states,
@@ -30,7 +28,7 @@ public interface AdminEventApi {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size);
 
-    @PatchMapping("/{eventId}")
+    @PatchMapping("/admin/events/{eventId}")
     EventFullDto updateEvent(@PathVariable @Positive Long eventId,
                              @RequestBody @Valid UpdateEventAdminRequest updateRequest);
 
