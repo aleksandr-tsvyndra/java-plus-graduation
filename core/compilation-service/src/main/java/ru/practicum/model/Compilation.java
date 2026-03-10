@@ -50,5 +50,5 @@ public class Compilation {
 
     @Builder.Default
     @Column(name = "event_id")
-    private Set<Long> eventsId = new HashSet<>();
+    Set<Long> eventsId = new HashSet<>();
 }
