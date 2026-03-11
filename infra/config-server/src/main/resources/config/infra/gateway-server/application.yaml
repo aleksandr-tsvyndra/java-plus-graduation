@@ -5,10 +5,68 @@ spring:
         locator:
           enabled: false
       routes:
-        - id: main_service_route
-          uri: lb://main-service
+        # Маршруты для Admin контроллеров
+        - id: admin-categories-route
+          uri: lb://category-service
           predicates:
-            - Path=/**
+            - Path=/admin/categories/**
+
+        - id: admin-compilations-route
+          uri: lb://compilation-service
+          predicates:
+            - Path=/admin/compilations/**
+
+        - id: admin-events-route
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/events/**
+
+        - id: admin-reviews-route
+          uri: lb://review-service
+          predicates:
+            - Path=/admin/reviews/**
+
+        - id: admin-users-route
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+
+        # Маршруты для Private контроллеров
+        - id: private-requests-route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**, /users/{userId}/events/{eventId}/requests
+
+        - id: private-events-route
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**
+
+        - id: private-reviews-route
+          uri: lb://review-service
+          predicates:
+            - Path=/users/{userId}/reviews/**
+
+        # Маршруты для Public контроллеров
+        - id: public-categories-route
+          uri: lb://category-service
+          predicates:
+            - Path=/categories/**
+
+        - id: public-compilations-route
+          uri: lb://compilation-service
+          predicates:
+            - Path=/compilations/**
+
+        - id: public-events-route
+          uri: lb://event-service
+          predicates:
+            - Path=/events/**
+
+        - id: public-reviews-route
+          uri: lb://review-service
+          predicates:
+            - Path=/reviews/**
 
 server:
   port: 8080
