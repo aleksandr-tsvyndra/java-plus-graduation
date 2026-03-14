@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
-import ru.practicum.kafka.producer.KafkaEventSimilarityProducer;
+import ru.practicum.kafka.KafkaEventSimilarityProducer;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,12 +25,6 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
     private static final double LIKE_WEIGHT = 1.0;
 
     @Override
-    public void aggregateEventSimilarity(KafkaEventSimilarityProducer producer, UserActionAvro userAction) {
-        List<EventSimilarityAvro> eventSimilarityAvros = updateEventSimilarity(userAction);
-        eventSimilarityAvros.forEach(producer::send);
-        producer.flush();
-    }
-
     public List<EventSimilarityAvro> updateEventSimilarity(UserActionAvro userAction) {
         Long eventA = userAction.getEventId();
         Long userId = userAction.getUserId();

@@ -1,4 +1,4 @@
-package ru.practicum.kafka.producer;
+package ru.practicum.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,6 @@ public class KafkaEventSimilarityProducer implements AutoCloseable, DisposableBe
         } catch (Exception e) {
             log.error("Ошибка при отправке сообщения!", e);
         }
-    }
-
-    public void flush() {
-        producer.flush();
     }
 
     @Override

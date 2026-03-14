@@ -1,4 +1,4 @@
-package ru.practicum.kafka.consumer;
+package ru.practicum.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class KafkaUserActionConsumer implements AutoCloseable {
     }
 
     public ConsumerRecords<String, UserActionAvro> poll() {
-        return this.consumer.poll(Duration.ofMillis(100));
+        return this.consumer.poll(Duration.ofMillis(1000));
     }
 
     public void commitAsync() {

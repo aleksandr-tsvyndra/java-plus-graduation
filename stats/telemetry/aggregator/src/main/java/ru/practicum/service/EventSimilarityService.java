@@ -1,10 +1,12 @@
 package ru.practicum.service;
 
+import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
-import ru.practicum.kafka.producer.KafkaEventSimilarityProducer;
+
+import java.util.List;
 
 public interface EventSimilarityService {
 
-    void aggregateEventSimilarity(KafkaEventSimilarityProducer producer, UserActionAvro userAction);
+    List<EventSimilarityAvro> updateEventSimilarity(UserActionAvro userAction);
 
 }

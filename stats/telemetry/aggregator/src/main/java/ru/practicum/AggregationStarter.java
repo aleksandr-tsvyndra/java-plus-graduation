@@ -2,13 +2,17 @@ package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.stereotype.Component;
+import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
-import ru.practicum.kafka.consumer.KafkaUserActionConsumer;
-import ru.practicum.kafka.producer.KafkaEventSimilarityProducer;
+import ru.practicum.kafka.KafkaUserActionConsumer;
+import ru.practicum.kafka.KafkaEventSimilarityProducer;
 import ru.practicum.service.EventSimilarityService;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -25,9 +29,12 @@ public class AggregationStarter {
             consumer.subscribeToTopics();
             while (true) {
                 ConsumerRecords<String, UserActionAvro> records = consumer.poll();
-                for (var record : records) {
+                for (ConsumerRecord<String, UserActionAvro> record : records) {
                     log.info("Вызываем метод сервиса aggregateEventSimilarity для агрегации сообщения");
-                    similarityService.aggregateEventSimilarity(producer, record.value());
+                    List<EventSimilarityAvro> eventSimilarityAvros = similarityService.updateEventSimilarity(record.value());
+                    for (EventSimilarityAvro eventSimilarity : eventSimilarityAvros) {
+                        producer.send(eventSimilarity);
+                    }
                 }
                 consumer.commitAsync();
             }
