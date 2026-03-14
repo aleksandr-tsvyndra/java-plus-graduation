@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   stats-db:
     image: postgres:16.1
@@ -21,24 +19,6 @@ services:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
 
-  discovery-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: discovery-server
-    ports:
-      - "8761:8761"
-    volumes:
-      - ./infra/discovery-server/target/discovery-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-
-  config-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: config-server
-    volumes:
-      - ./infra/config-server/target/config-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-    depends_on:
-      - discovery-server
-
   gateway-server:
     image: eclipse-temurin:21-jdk-alpine
     container_name: gateway-server
@@ -47,8 +27,6 @@ services:
     volumes:
       - ./infra/gateway-server/target/gateway-server-0.0.1-SNAPSHOT.jar:/app.jar
     command: java -jar /app.jar
-    depends_on:
-      - config-server
 
   stats-server:
     image: eclipse-temurin:21-jdk-alpine
@@ -75,8 +53,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   category-service:
     image: eclipse-temurin:21-jdk-alpine
@@ -90,8 +66,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   event-service:
     image: eclipse-temurin:21-jdk-alpine
@@ -105,8 +79,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   request-service:
     image: eclipse-temurin:21-jdk-alpine
@@ -120,8 +92,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   compilation-service:
     image: eclipse-temurin:21-jdk-alpine
@@ -135,8 +105,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   review-service:
     image: eclipse-temurin:21-jdk-alpine
@@ -150,8 +118,6 @@ services:
     command: java -jar /app.jar
     depends_on:
       - main-db
-      - discovery-server
-      - config-server
 
   kafka:
     image: confluentinc/confluent-local:7.4.3
@@ -180,7 +146,7 @@ services:
             'kafka-topics --create --topic stats.user-actions.v1 \
                           --partitions 1 --replication-factor 1 --if-not-exists \
                           --bootstrap-server kafka:29092 && \
-             kafka-topics --create --topic stats.events-similarity.v1 \
+            kafka-topics --create --topic stats.events-similarity.v1 \
                           --partitions 1 --replication-factor 1 --if-not-exists \
                           --bootstrap-server kafka:29092'"
     init: true
