@@ -25,7 +25,7 @@ public class KafkaUserActionConsumer implements AutoCloseable {
     }
 
     public ConsumerRecords<String, UserActionAvro> poll() {
-        return this.consumer.poll(Duration.ofMillis(1000));
+        return this.consumer.poll(Duration.ofMillis(100));
     }
 
     public void commitAsync() {
