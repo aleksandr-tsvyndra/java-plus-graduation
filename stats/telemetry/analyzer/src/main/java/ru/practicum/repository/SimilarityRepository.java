@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface SimilarityRepository extends JpaRepository<Similarity, Long> {
 
-    @Query("SELECT e FROM Similarity s WHERE s.eventId1 = :eventId OR s.eventId2 = :eventId")
+    @Query("SELECT s FROM Similarity s WHERE s.eventId1 = :eventId OR s.eventId2 = :eventId")
     List<Similarity> findByEventId1OrEventId2(@Param("eventId") Long eventId);
 
     List<Similarity> findTopByEventId1InOrEventId2InOrderBySimilarityDesc(Set<Long> eventIds1,
