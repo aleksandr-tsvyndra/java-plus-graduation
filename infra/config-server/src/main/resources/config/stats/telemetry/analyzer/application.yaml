@@ -1,9 +1,8 @@
-server:
+grpc:
+  server:
     port: 0
 
 spring:
-  kafka:
-    bootstrap-servers: localhost:9092
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -14,10 +13,6 @@ spring:
     url: jdbc:postgresql://localhost:5433/stats
     username: dbuser
     password: 12345
-
-grpc:
-  server:
-    port: 0
 
 analyzer:
   kafka:
