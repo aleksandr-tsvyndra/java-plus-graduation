@@ -14,6 +14,8 @@ public class Aggregator {
         ConfigurableApplicationContext context = SpringApplication.run(Aggregator.class, args);
         AggregationStarter aggregationStarter = context.getBean(AggregationStarter.class);
 
+        Runtime.getRuntime().addShutdownHook(new Thread(aggregationStarter::stop));
+
         Thread aggregatorThread = new Thread(aggregationStarter::start);
         aggregatorThread.setName("AggregatorThread");
         aggregatorThread.start();
