@@ -1,0 +1,29 @@
+server:
+  port: 0
+
+aggregator:
+  kafka:
+    producer:
+      properties:
+        bootstrap.servers: localhost:9092
+        key.serializer: org.apache.kafka.common.serialization.StringSerializer
+        value.serializer: ru.practicum.avro.serializer.GeneralAvroSerializer
+    consumer:
+      properties:
+        client.id: AggregatorConsumer
+        group.id: aggregator.group
+        bootstrap.servers: localhost:9092
+        key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value.deserializer: ru.practicum.avro.deserializer.UserActionDeserializer
+    topics:
+      user-action-topic: stats.user-actions.v1
+      event-similarity-topic: stats.events-similarity.v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, info
+  endpoint:
+    health:
+      show-details: always

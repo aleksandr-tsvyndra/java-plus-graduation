@@ -1,29 +1,29 @@
-package ru.practicum.kafka;
+package ru.practicum.kafka.producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.practicum.ewm.stats.avro.UserActionAvro;
+import org.springframework.beans.factory.annotation.Value;
+import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 
 import java.time.Duration;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaUserActionProducer implements AutoCloseable, DisposableBean {
-    private final Producer<String, UserActionAvro> producer;
+public class KafkaEventSimilarityProducer implements AutoCloseable, DisposableBean {
+    private final Producer<String, EventSimilarityAvro> producer;
 
-    @Value("${collector.kafka.producer.topics.user-action-topic}")
-    private String userActionTopic;
+    @Value("aggregator.kafka.topics.event-similarity-topic")
+    private String eventSimilarityTopic;
 
-    public void send(UserActionAvro userAction) {
+    public void send(EventSimilarityAvro event) {
         try {
-            ProducerRecord<String, UserActionAvro> record = new ProducerRecord<>(userActionTopic, userAction);
-            log.info("Отправляем в топик {} запись: {}", userActionTopic, record);
+            ProducerRecord<String, EventSimilarityAvro> record = new ProducerRecord<>(eventSimilarityTopic, event);
+            log.info("Отправляем в топик {} запись: {}", eventSimilarityTopic, record);
             producer.send(record);
         } catch (Exception e) {
             log.error("Ошибка при отправке сообщения!", e);
@@ -38,10 +38,10 @@ public class KafkaUserActionProducer implements AutoCloseable, DisposableBean {
     public void close() {
         try {
             producer.flush();
-            log.info("Закрываем KafkaEventProducer...");
+            log.info("Закрываем KafkaEventSimilarityProducer...");
             producer.close(Duration.ofSeconds(10));
         } catch (Exception e) {
-            log.error("Ошибка при попытке закрыть KafkaEventProducer!", e);
+            log.error("Ошибка при попытке закрыть KafkaEventSimilarityProducer!", e);
             throw e;
         }
     }
