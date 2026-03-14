@@ -103,7 +103,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     private List<Similarity> findAllContainsEventId(long eventId) {
-        return similarityRepo.findByEvent1OrEvent2(eventId);
+        return similarityRepo.findByEventId1OrEventId2(eventId);
     }
 
     private List<Similarity> findNPairContainsEventIdsSortedDescScore(Set<Long> eventIds, long maxResults) {

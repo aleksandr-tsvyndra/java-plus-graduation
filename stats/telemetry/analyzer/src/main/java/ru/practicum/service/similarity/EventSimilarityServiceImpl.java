@@ -19,7 +19,7 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
     @Transactional
     public void addSimilarity(EventSimilarityAvro value) {
         Similarity eventSimilarity = buildSimilarity(value);
-        similarityRepo.findByEvent1AndEvent2(eventSimilarity.getEventId1(), eventSimilarity.getEventId2())
+        similarityRepo.findByEventId1AndEventId2(eventSimilarity.getEventId1(), eventSimilarity.getEventId2())
                 .ifPresent(oldEventSimilarity -> eventSimilarity.setId(oldEventSimilarity.getId()));
         similarityRepo.save(eventSimilarity);
     }
