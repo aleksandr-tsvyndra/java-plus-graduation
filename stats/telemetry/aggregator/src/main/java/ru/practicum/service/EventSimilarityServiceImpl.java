@@ -28,6 +28,7 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
     public void aggregateEventSimilarity(KafkaEventSimilarityProducer producer, UserActionAvro userAction) {
         List<EventSimilarityAvro> eventSimilarityAvros = updateEventSimilarity(userAction);
         eventSimilarityAvros.forEach(producer::send);
+        producer.flush();
     }
 
     public List<EventSimilarityAvro> updateEventSimilarity(UserActionAvro userAction) {

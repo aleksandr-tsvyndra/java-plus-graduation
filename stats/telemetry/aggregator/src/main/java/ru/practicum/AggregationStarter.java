@@ -37,9 +37,4 @@ public class AggregationStarter {
             log.error("Ошибка во время работы консьюмера и продюсера в классе AggregationStarter", e);
         }
     }
-
-    public void stop() {
-        log.info("Остановка агрегатора через wakeup...");
-        consumer.wakeup();
-    }
 }
