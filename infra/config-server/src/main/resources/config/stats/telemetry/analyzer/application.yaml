@@ -1,0 +1,45 @@
+grpc:
+  server:
+    port: 0
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/stats
+    username: dbuser
+    password: 12345
+
+analyzer:
+  kafka:
+    consumer:
+      event-similarity:
+        properties:
+          bootstrap.servers: localhost:9092
+          key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          value.deserializer: ru.practicum.avro.deserializer.EventSimilarityDeserializer
+          client.id: analyzer
+          group.id: analyzer-similarity-group
+      user-action:
+        properties:
+          bootstrap.servers: localhost:9092
+          key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          value.deserializer: ru.practicum.avro.deserializer.UserActionDeserializer
+          client.id: analyzer
+          group.id: analyzer-interaction-group
+    topics:
+      event-similarity-topic: stats.events-similarity.v1
+      user-action-topic: stats.user-actions.v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, info
+  endpoint:
+    health:
+      show-details: always
