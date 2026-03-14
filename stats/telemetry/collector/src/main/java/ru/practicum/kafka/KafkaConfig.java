@@ -1,11 +1,11 @@
 package ru.practicum.kafka;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.practicum.ewm.stats.avro.UserActionAvro;
 
 import java.util.Properties;
 
@@ -21,7 +21,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaProducer<String, SpecificRecordBase> kafkaProducer() {
+    public KafkaProducer<String, UserActionAvro> kafkaProducer() {
         log.info("Создаём бин KafkaProducer...");
         return new KafkaProducer<>(kafkaProducerProperties());
     }
