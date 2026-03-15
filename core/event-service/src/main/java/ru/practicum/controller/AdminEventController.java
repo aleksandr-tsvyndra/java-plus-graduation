@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.api.event.AdminEventApi;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.UpdateEventAdminRequest;
+import ru.practicum.category_service.dto.event.EventFullDto;
+import ru.practicum.category_service.dto.event.UpdateEventAdminRequest;
 import ru.practicum.service.EventService;
 
 import java.time.LocalDateTime;

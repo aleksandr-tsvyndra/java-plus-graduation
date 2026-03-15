@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.event.PublicEventApi;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.category_service.dto.event.EventFullDto;
+import ru.practicum.category_service.dto.event.EventShortDto;
 import ru.practicum.service.PublicEventService;
 
 import java.time.LocalDateTime;

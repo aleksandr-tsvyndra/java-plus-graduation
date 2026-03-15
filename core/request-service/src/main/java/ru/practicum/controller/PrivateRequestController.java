@@ -1,57 +1,46 @@
 package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.request.PrivateRequestApi;
-import ru.practicum.dto.enums.RequestStatus;
-import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
-import ru.practicum.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.dto.request.ParticipationRequestDto;
+import ru.practicum.request_service.dto.ParticipationRequestDto;
 import ru.practicum.service.RequestService;
 
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 @RestController
+@RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
-public class PrivateRequestController implements PrivateRequestApi {
-    private final RequestService participationRequestService;
+public class PrivateRequestController {
 
-    @Override
-    public List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId) {
-        return participationRequestService.getEventRequests(userId, eventId);
+    private final RequestService requestService;
+
+    @PostMapping
+    public ResponseEntity<ParticipationRequestDto> createRequest(@PathVariable Long userId,
+                                                                 @RequestParam Long eventId) {
+        log.debug("Метод createRequest(); userId={}, eventId={}", userId, eventId);
+
+        ParticipationRequestDto result = requestService.create(userId, eventId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @Override
-    public EventRequestStatusUpdateResult updateRequestStatus(Long userId,
-                                                              Long eventId,
-                                                              EventRequestStatusUpdateRequest updateRequest) {
-        return participationRequestService.updateRequestStatus(userId, eventId, updateRequest);
+    @GetMapping
+    public ResponseEntity<List<ParticipationRequestDto>> getRequests(@PathVariable Long userId) {
+        log.debug("Метод getRequests(); userId={}", userId);
+
+        List<ParticipationRequestDto> result = requestService.getAllBy(userId);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public List<ParticipationRequestDto> getUserRequests(Long userId) {
-        return participationRequestService.getUserRequests(userId);
-    }
+    @PatchMapping("{requestId}/cancel")
+    public ResponseEntity<ParticipationRequestDto> cancelRequest(@PathVariable Long userId,
+                                                                 @PathVariable Long requestId) {
+        log.debug("Метод cancelRequest(); userId={}, requestId={}", userId, requestId);
 
-    @Override
-    public ParticipationRequestDto createRequest(Long userId, Long eventId) {
-        return participationRequestService.createRequest(userId, eventId);
-    }
-
-    @Override
-    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
-        return participationRequestService.cancelRequest(userId, requestId);
-    }
-
-    @Override
-    public Map<Long, List<ParticipationRequestDto>> getConfirmedRequestsCount(List<Long> eventIds,
-                                                                              RequestStatus requestStatus) {
-        return participationRequestService.getConfirmedRequestsCount(eventIds, requestStatus);
-    }
-
-    @Override
-    public ParticipationRequestDto getUserRequestByUserIdAndEventId(Long userId, Long eventId) {
-        return participationRequestService.getUserRequestByUserIdAndEventId(userId, eventId);
+        ParticipationRequestDto result = requestService.cancel(userId, requestId);
+        return ResponseEntity.ok(result);
     }
 }

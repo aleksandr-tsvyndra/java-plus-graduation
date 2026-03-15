@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.api.event.PrivateEventApi;
-import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.EventShortDto;
-import ru.practicum.dto.event.NewEventDto;
-import ru.practicum.dto.event.UpdateEventUserRequest;
+import ru.practicum.category_service.dto.event.EventFullDto;
+import ru.practicum.category_service.dto.event.EventShortDto;
+import ru.practicum.category_service.dto.event.NewEventDto;
+import ru.practicum.category_service.dto.event.UpdateEventUserRequest;
 import ru.practicum.service.PrivateEventService;
 
 import java.util.List;

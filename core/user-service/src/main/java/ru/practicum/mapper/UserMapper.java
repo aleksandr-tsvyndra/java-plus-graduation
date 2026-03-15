@@ -1,17 +1,19 @@
 package ru.practicum.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import ru.practicum.dto.user.NewUserRequest;
-import ru.practicum.dto.user.UserDto;
-import ru.practicum.dto.user.UserShortDto;
+import org.mapstruct.Mapping;
+import ru.practicum.user_service.dto.NewUserRequest;
+import ru.practicum.user_service.dto.UserDto;
+import ru.practicum.user_service.dto.UserShortDto;
 import ru.practicum.model.User;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
-    UserDto toUserDto(User user);
 
-    UserShortDto toUserShortDto(User user);
+    UserDto toFullDto(User user);
 
-    User toUser(NewUserRequest newUserRequest);
+    @Mapping(target = "id", ignore = true)
+    User toEntity(NewUserRequest newDto);
+
+    UserShortDto toShortDto(User user);
 }
