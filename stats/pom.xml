@@ -21,6 +21,7 @@
         <module>stats-dto</module>
         <module>collector</module>
         <module>serialization</module>
+        <module>aggregator</module>
     </modules>
 
     <dependencies>
