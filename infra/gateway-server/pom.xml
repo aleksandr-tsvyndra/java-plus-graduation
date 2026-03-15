@@ -12,10 +12,6 @@
 
     <artifactId>gateway-server</artifactId>
 
-    <properties>
-        <spring-cloud-starter-gateway-server-webflux.version>4.3.0</spring-cloud-starter-gateway-server-webflux.version>
-    </properties>
-
     <dependencies>
         <!-- Core Spring Boot Starter -->
         <dependency>
@@ -26,8 +22,7 @@
         <!-- Spring Cloud Gateway: основной компонент для реализации API Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
-            <version>${spring-cloud-starter-gateway-server-webflux.version}</version>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
         <!-- Actuator: для мониторинга и управления приложением -->

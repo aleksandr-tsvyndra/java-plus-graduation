@@ -1,12 +1,10 @@
 
 spring:
-  # Отключение автоматического связывания с JDBC
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-  # Автоматическое связывание с KafkaTemplate
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -19,7 +17,6 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: ru.practicum.recomm.kafka.serializer.GeneralAvroSerializer
 
-# Маппинг логических имен топиков на реальные имена в Kafka
 collector:
   kafka:
     consumer:

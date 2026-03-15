@@ -21,7 +21,7 @@ import ru.practicum.core.request.dto.UserParticipationRequestDto;
 import ru.practicum.core.request.mapper.EventRequestsCountMapper;
 import ru.practicum.core.request.mapper.ParticipationRequestMapper;
 import ru.practicum.core.request.model.ParticipationRequest;
-import ru.practicum.core.request.repository.RequestRepository;
+import ru.practicum.core.request.service.repository.RequestRepository;
 import ru.practicum.recomm.client.CollectorClient;
 import ru.practicum.recommendations.messages.ActionTypeProto;
 import ru.practicum.recommendations.messages.UserActionProto;

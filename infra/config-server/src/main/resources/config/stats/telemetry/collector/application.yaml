@@ -6,7 +6,6 @@ grpc:
     port: 59091
     reflection-service-enabled: true
 
-# Автоматическое связывание с KafkaTemplate
 spring:
   kafka:
     bootstrap-servers: localhost:9092
@@ -15,7 +14,6 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: ru.practicum.recomm.kafka.serializer.GeneralAvroSerializer
 
-# Маппинг логических имен топиков на реальные имена в Kafka
 collector:
   kafka:
     producer:

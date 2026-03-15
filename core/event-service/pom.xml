@@ -116,6 +116,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ru.practicum</groupId>
+            <artifactId>grpc-schemas</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
