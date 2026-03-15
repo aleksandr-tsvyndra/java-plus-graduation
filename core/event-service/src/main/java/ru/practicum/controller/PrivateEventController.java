@@ -1,39 +1,93 @@
 package ru.practicum.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.event.PrivateEventApi;
-import ru.practicum.category_service.dto.event.EventFullDto;
-import ru.practicum.category_service.dto.event.EventShortDto;
-import ru.practicum.category_service.dto.event.NewEventDto;
-import ru.practicum.category_service.dto.event.UpdateEventUserRequest;
-import ru.practicum.service.PrivateEventService;
+import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.dto.UpdEventUserRequest;
+import ru.practicum.event.service.EventService;
+import ru.practicum.request_service.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.request_service.dto.ParticipationRequestDto;
+import ru.practicum.request_service.dto.UpdRequestsStatusResult;
 
+import java.net.URI;
 import java.util.List;
 
+@Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
-public class PrivateEventController implements PrivateEventApi {
-    private final PrivateEventService privateEventService;
+@RequestMapping("/users/{userId}/events")
+public class PrivateEventController {
 
-    @Override
-    public List<EventShortDto> getEventsByUser(Long userId, int from, int size) {
-        return privateEventService.getEventsByUser(userId, PageRequest.of(from / size, size));
+    private final EventService eventService;
+
+    @PostMapping
+    public ResponseEntity<EventFullDto> create(@PathVariable("userId") @NotNull @Positive Long userId,
+                                               @RequestBody @Valid final NewEventDto newDto) {
+        log.debug("Метод create(); userId = {}; newDto = {}", userId, newDto);
+
+        EventFullDto result = eventService.create(userId, newDto);
+        return ResponseEntity
+                .created(URI.create("/events/" + result.getId()))
+                .body(result);
     }
 
-    @Override
-    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
-        return privateEventService.createEvent(userId, newEventDto);
+    @GetMapping
+    public ResponseEntity<List<EventShortDto>> findAll(@PathVariable("userId") @Positive Long userId,
+                                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                       @RequestParam(defaultValue = "10") @Positive int size) {
+        log.debug("Метод findAll(); userId={}, from={}, size={}", userId, from, size);
+
+        List<EventShortDto> result = eventService.getAllByUser(userId, from, size);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public EventFullDto getEventByUser(Long userId, Long eventId) {
-        return privateEventService.getEventByUser(userId, eventId);
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventFullDto> find(@PathVariable("userId") @Positive Long userId,
+                                             @PathVariable("eventId") @Positive Long eventId) {
+        log.debug("Метод find(); userId={}, eventId={}", userId, eventId);
+
+        EventFullDto result = eventService.getByUser(userId, eventId);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
-        return privateEventService.updateEventByUser(userId, eventId, updateRequest);
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventFullDto> update(@PathVariable("userId") @Positive Long userId,
+                                               @PathVariable("eventId") @Positive Long eventId,
+                                               @RequestBody @Valid final UpdEventUserRequest updDto) {
+        log.debug("Метод update(); userId={}, eventId={}, updDto={}", userId, eventId, updDto);
+
+        EventFullDto result = eventService.updateByUser(userId, eventId, updDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{eventId}/requests")
+    public ResponseEntity<List<ParticipationRequestDto>> getUserRequests(@PathVariable @Positive Long userId,
+                                                                         @PathVariable @Positive Long eventId) {
+        log.debug("Метод getUserRequests(); userId={}, eventId={}", userId, eventId);
+
+        List<ParticipationRequestDto> result = eventService.getEventRequests(userId, eventId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    public ResponseEntity<UpdRequestsStatusResult> updateRequests(
+            @PathVariable @Positive Long userId,
+            @PathVariable @Positive Long eventId,
+            @RequestBody @Valid EventRequestStatusUpdateRequest updDto
+    ) {
+        log.debug("Метод updateRequest(); userId={}, eventId={}", userId, eventId);
+
+        UpdRequestsStatusResult result = eventService.updateRequests(userId, eventId, updDto);
+        return ResponseEntity.ok(result);
     }
 }

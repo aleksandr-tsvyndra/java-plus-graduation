@@ -1,67 +1,93 @@
 package ru.practicum.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.api.event.PublicEventApi;
-import ru.practicum.category_service.dto.event.EventFullDto;
-import ru.practicum.category_service.dto.event.EventShortDto;
-import ru.practicum.service.PublicEventService;
+import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.dto.UserEventSearchParams;
+import ru.practicum.event.service.EventService;
+import ru.practicum.event_service.dto.EventDtoForRequestService;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-public class PublicEventController implements PublicEventApi {
-    private final PublicEventService publicEventService;
+@RequestMapping("/events")
+public class PublicEventController {
 
-    @Override
-    public List<EventShortDto> getEvents(
-            String text,
-            List<Long> categories,
-            Boolean paid,
-            LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
-            Boolean onlyAvailable,
-            String sort,
-            int from,
-            int size,
-            HttpServletRequest httpRequest
+    private static final String USER_ID_HEADER = "X-EWM-USER-ID";
+    private final EventService eventService;
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventFullDto> publicSearchOne(@PathVariable Long eventId,
+                                                        @RequestHeader(value = USER_ID_HEADER, required = false) Long userId,
+                                                        HttpServletRequest request) {
+        log.debug("Метод publicSearchOne(); eventId={}", eventId);
+
+        EventFullDto event = eventService.getPublicBy(eventId, userId, request);
+        return ResponseEntity.ok(event);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EventFullDto>> publicSearchMany(@Valid @ModelAttribute UserEventSearchParams params,
+                                                               HttpServletRequest request) {
+        log.debug("Метод publicSearchMany(); {}", params);
+
+        List<EventFullDto> events = eventService.getPublicBy(params, request);
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/internal/{eventId}")
+    public ResponseEntity<EventDtoForRequestService> getEventById(
+            @PathVariable Long eventId) {
+
+        log.debug("Feign-запрос: получение EventDtoForRequestService для eventId={}", eventId);
+
+        EventDtoForRequestService dto = eventService.getEventDtoForRequestService(eventId);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("internal/{eventId}/increment-confirmed")
+    public ResponseEntity<EventDtoForRequestService> incrementConfirmedRequests(
+            @PathVariable Long eventId) {
+
+        log.debug("Feign-запрос: инкремент confirmedRequests для eventId={}", eventId);
+
+        try {
+            EventDtoForRequestService updatedDto = eventService.incrementConfirmedRequests(eventId);
+            return ResponseEntity.ok(updatedDto);
+        } catch (Exception e) {
+            log.error("Ошибка при инкременте confirmedRequests для eventId={}: {}", eventId, e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PutMapping("/{eventId}/like")
+    public ResponseEntity<Void> like(@PathVariable @PositiveOrZero @NotNull Long eventId,
+                                     @RequestHeader(USER_ID_HEADER) Long userId) {
+        log.debug("Метод like(); eventId={}, userId={}", eventId, userId);
+
+        eventService.like(eventId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<EventShortDto>> getRecommendations(
+            @RequestHeader(USER_ID_HEADER) Long userId,
+            @RequestParam(defaultValue = "10") @Positive int size
     ) {
-        return publicEventService.getEventsPublic(text, categories, paid, rangeStart, rangeEnd,
-                onlyAvailable, sort, PageRequest.of(from / size, size), httpRequest);
-    }
+        log.debug("Метод getRecommendations();  userId={}, size={}", userId, size);
 
-    @Override
-    public EventFullDto getEventById(Long id, HttpServletRequest httpRequest) {
-        return publicEventService.getEventById(id, httpRequest);
-    }
-
-    @Override
-    public void validateCategoryHasNoEvents(Long categoryId) {
-        publicEventService.validateCategoryHasNoEvents(categoryId);
-    }
-
-    @Override
-    public void validateEventExistingById(Long eventId) {
-        publicEventService.validateEventExistingById(eventId);
-    }
-
-    @Override
-    public Set<EventShortDto> getEventShortDtoSetByIds(Set<Long> eventIds) {
-        return publicEventService.getEventShortDtoSetByIds(eventIds);
-    }
-
-    @Override
-    public EventShortDto getEventShortDtoByIdClient(Long id) {
-        return publicEventService.getEventShortDtoByIdClient(id);
-    }
-
-    @Override
-    public EventFullDto getEventFullDtoByIdClient(Long id) {
-        return publicEventService.getEventFullDtoByIdClient(id);
+        List<EventShortDto> result = eventService.getRecommendations(userId, size);
+        return ResponseEntity.ok(result);
     }
 }

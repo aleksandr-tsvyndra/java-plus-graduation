@@ -1,37 +1,42 @@
 package ru.practicum.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.api.event.AdminEventApi;
-import ru.practicum.category_service.dto.event.EventFullDto;
-import ru.practicum.category_service.dto.event.UpdateEventAdminRequest;
-import ru.practicum.service.EventService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.event.dto.AdminEventSearchParams;
+import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.dto.UpdEventAdminRequest;
+import ru.practicum.event.service.EventService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
-public class AdminEventController implements AdminEventApi {
+@RequestMapping("/admin/events")
+public class AdminEventController {
+
     private final EventService eventService;
 
-    @Override
-    public List<EventFullDto> getEvents(
-            List<Long> users,
-            List<String> states,
-            List<Long> categories,
-            LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
-            int from,
-            int size
-    ) {
-        return eventService.getEventsForAdmin(users, states, categories, rangeStart, rangeEnd,
-                PageRequest.of(from / size, size));
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventFullDto> adminUpdate(@PathVariable @Positive Long eventId,
+                                                    @RequestBody @Valid UpdEventAdminRequest updDto) {
+        log.debug("Метод adminUpdateEvent(); eventId: {}, dto={}", eventId, updDto);
+
+        EventFullDto eventFullDto = eventService.updateByAdmin(eventId, updDto);
+        return ResponseEntity.ok(eventFullDto);
     }
 
-    @Override
-    public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateRequest) {
-        return eventService.updateEventByAdmin(eventId, updateRequest);
+    @GetMapping
+    public ResponseEntity<List<EventFullDto>> adminSearch(@Valid @ModelAttribute AdminEventSearchParams params) {
+        log.debug("Метод adminSearchEvents; {}", params);
+
+        List<EventFullDto> events = eventService.searchForAdmin(params);
+        return ResponseEntity.ok(events);
     }
 }
