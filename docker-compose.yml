@@ -1,154 +1,112 @@
-version: '3.8'
-
 services:
   stats-db:
     image: postgres:16.1
-    container_name: stats
+    container_name: stats-db
     ports:
-      - "5433:5432"
+      - "6432:5432"
     environment:
       - POSTGRES_DB=stats
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=stats
+      - POSTGRES_PASSWORD=stats
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -p 5432" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  main-db:
+  event-db:
     image: postgres:16.1
-    container_name: main
+    container_name: event-db
     ports:
-      - "5432:5432"
+      - "4432:5432"
     environment:
-      - POSTGRES_DB=main
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=event
+      - POSTGRES_USER=event
+      - POSTGRES_PASSWORD=event
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -p 5432" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  discovery-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: discovery-server
+  user-db:
+    image: postgres:16.1
+    container_name: user-db
     ports:
-      - "8761:8761"
-    volumes:
-      - ./infra/discovery-server/target/discovery-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-
-  config-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: config-server
-    volumes:
-      - ./infra/config-server/target/config-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-    depends_on:
-      - discovery-server
-
-  gateway-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: gateway-server
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./infra/gateway-server/target/gateway-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-    depends_on:
-      - config-server
-
-  stats-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: stats-server
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./stats/stats-server/target/stats-server-0.0.1-SNAPSHOT.jar:/app.jar
+      - "4433:5432"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-    command: java -jar /app.jar
-    depends_on:
-      - stats-db
+      - POSTGRES_DB=user
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -p 5432" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  user-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: user-service
+  request-db:
+    image: postgres:16.1
+    container_name: request-db
     ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/user-service-0.0.1-SNAPSHOT.jar:/app.jar
+      - "4434:5432"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-      - discovery-server
-      - config-server
+      - POSTGRES_DB=request
+      - POSTGRES_USER=request
+      - POSTGRES_PASSWORD=request
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -p 5432" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  category-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: category-service
+  comment-db:
+    image: postgres:16.1
+    container_name: comment-db
     ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/category-service-0.0.1-SNAPSHOT.jar:/app.jar
+      - "4435:5432"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-      - discovery-server
-      - config-server
+      - POSTGRES_DB=comment
+      - POSTGRES_USER=comment
+      - POSTGRES_PASSWORD=comment
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -p 5432" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  event-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: event-service
+  kafka:
+    image: confluentinc/confluent-local:7.4.3
+    hostname: kafka
+    container_name: kafka
     ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/event-service-0.0.1-SNAPSHOT.jar:/app.jar
+      - "9092:9092"
+      - "9101:9101"
+    restart: unless-stopped
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-      - discovery-server
-      - config-server
+      KAFKA_NODE_ID: 1
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
 
-  request-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: request-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/request-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
+  kafka-init-topics:
+    image: confluentinc/confluent-local:7.4.3
+    container_name: kafka-init-topics
     depends_on:
-      - main-db
-      - discovery-server
-      - config-server
-
-  compilation-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: compilation-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/compilation-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-      - discovery-server
-      - config-server
-
-  review-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: review-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/review-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-      - discovery-server
-      - config-server
+      - kafka
+    command: "bash -c \
+            'kafka-topics --create --topic stats.user-actions.v1 \
+                         --partitions 1 --replication-factor 1 --if-not-exists \
+                         --bootstrap-server kafka:29092 && \
+            kafka-topics --create --topic stats.events-similarity.v1 \
+                         --partitions 1 --replication-factor 1 --if-not-exists \
+                         --bootstrap-server kafka:29092'"
+    init: true

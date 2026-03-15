@@ -1,27 +1,24 @@
 package ru.practicum.service;
 
-import ru.practicum.dto.enums.RequestStatus;
-import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
-import ru.practicum.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.dto.request.ParticipationRequestDto;
+import ru.practicum.request_service.dto.ParticipationRequestDto;
+import ru.practicum.request_service.dto.UpdRequestStatus;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public interface RequestService {
+
+    ParticipationRequestDto create(Long userId, Long eventId);
+
+    List<ParticipationRequestDto> getAllBy(Long userId);
+
+    ParticipationRequestDto cancel(Long userId, Long requestId);
+
     List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId);
 
-    EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId,
-                                                       EventRequestStatusUpdateRequest updateRequest);
+    List<ParticipationRequestDto> getRequestsByIds(List<Long> requestIds);
 
-    List<ParticipationRequestDto> getUserRequests(Long userId);
+    List<ParticipationRequestDto> updateRequestStatuses(Set<Long> requestIds, UpdRequestStatus status);
 
-    ParticipationRequestDto createRequest(Long userId, Long eventId);
-
-    ParticipationRequestDto cancelRequest(Long userId, Long requestId);
-
-    Map<Long, List<ParticipationRequestDto>> getConfirmedRequestsCount(List<Long> eventIds, RequestStatus requestStatus);
-
-    ParticipationRequestDto getUserRequestByUserIdAndEventId(Long userId, Long eventId);
-
+    boolean isParticipant(Long userId, Long eventId);
 }
