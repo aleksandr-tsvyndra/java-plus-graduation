@@ -17,7 +17,7 @@ import java.util.List;
 public class KafkaUserActionConsumer implements AutoCloseable {
     private final Consumer<String, UserActionAvro> consumer;
 
-    @Value("${aggregator.kafka.topics.user-action-topic}")
+    @Value("${aggregator.kafka.consumer.topics.user-action-topic}")
     private String userActionTopic;
 
     public void subscribeToTopics() {

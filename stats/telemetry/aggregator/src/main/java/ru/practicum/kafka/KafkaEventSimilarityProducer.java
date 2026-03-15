@@ -17,7 +17,7 @@ import java.time.Duration;
 public class KafkaEventSimilarityProducer implements AutoCloseable, DisposableBean {
     private final Producer<String, EventSimilarityAvro> producer;
 
-    @Value("aggregator.kafka.topics.event-similarity-topic")
+    @Value("aggregator.kafka.producer.topics.event-similarity-topic")
     private String eventSimilarityTopic;
 
     public void send(EventSimilarityAvro event) {

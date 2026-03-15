@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
-import ru.practicum.kafka.KafkaEventSimilarityProducer;
 
 import java.time.Instant;
 import java.util.ArrayList;

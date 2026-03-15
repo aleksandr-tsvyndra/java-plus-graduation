@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 import ru.practicum.kafka.KafkaUserActionConsumer;
 import ru.practicum.kafka.KafkaEventSimilarityProducer;
-import ru.practicum.service.EventSimilarityService;
 
 import java.util.List;
 
