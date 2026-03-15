@@ -1,90 +1,49 @@
-spring:
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: false
-      routes:
-        # Маршруты для Admin контроллеров
-        - id: admin-categories-route
-          uri: lb://category-service
-          predicates:
-            - Path=/admin/categories/**
-
-        - id: admin-compilations-route
-          uri: lb://compilation-service
-          predicates:
-            - Path=/admin/compilations/**
-
-        - id: admin-events-route
-          uri: lb://event-service
-          predicates:
-            - Path=/admin/events/**
-
-        - id: admin-reviews-route
-          uri: lb://review-service
-          predicates:
-            - Path=/admin/reviews/**
-
-        - id: admin-users-route
-          uri: lb://user-service
-          predicates:
-            - Path=/admin/users/**
-
-        # Маршруты для Private контроллеров
-        - id: private-requests-route
-          uri: lb://request-service
-          predicates:
-            - Path=/users/{userId}/requests/**, /users/{userId}/events/{eventId}/requests
-
-        - id: private-events-route
-          uri: lb://event-service
-          predicates:
-            - Path=/users/{userId}/events/**
-
-        - id: private-reviews-route
-          uri: lb://review-service
-          predicates:
-            - Path=/users/{userId}/reviews/**
-
-        # Маршруты для Public контроллеров
-        - id: public-categories-route
-          uri: lb://category-service
-          predicates:
-            - Path=/categories/**
-
-        - id: public-compilations-route
-          uri: lb://compilation-service
-          predicates:
-            - Path=/compilations/**
-
-        - id: public-events-route
-          uri: lb://event-service
-          predicates:
-            - Path=/events/**
-
-        - id: public-reviews-route
-          uri: lb://review-service
-          predicates:
-            - Path=/reviews/**
-
 server:
   port: 8080
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/admin/users/**
+
+            - id: request-service
+              uri: lb://request-service
+              predicates:
+                - Path=/users/{userId}/requests/**, /users/{userId}/events/{eventId}/requests
+
+            - id: event-service
+              uri: lb://event-service
+              predicates:
+                - Path=/admin/**, /compilations/**, /categories/**, /events/**, /users/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    reactor.netty: DEBUG
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway,routes,beans,env
-  endpoint:
-    gateway:
+        include: info, health
+  info:
+    env:
       enabled: true
-    health:
-      show-details: always
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web.server: DEBUG
-    org.springframework.cloud.loadbalancer: DEBUG
-    com.netflix.discovery: DEBUG

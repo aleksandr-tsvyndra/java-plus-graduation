@@ -7,22 +7,16 @@
         <groupId>ru.practicum</groupId>
         <artifactId>explore-with-me</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>core</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-    <url>http://maven.apache.org</url>
-    <name>core</name>
 
     <modules>
+        <module>event-service</module>
         <module>interaction-api</module>
         <module>user-service</module>
-        <module>category-service</module>
-        <module>compilation-service</module>
-        <module>event-service</module>
         <module>request-service</module>
-        <module>review-service</module>
     </modules>
+
 </project>

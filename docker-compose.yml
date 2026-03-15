@@ -1,131 +1,12 @@
 services:
-  stats-db:
-    image: postgres:16.1
-    container_name: stats
-    ports:
-      - "5433:5432"
-    environment:
-      - POSTGRES_DB=stats
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-
-  main-db:
-    image: postgres:16.1
-    container_name: main
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=main
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=12345
-
-  gateway-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: gateway-server
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./infra/gateway-server/target/gateway-server-0.0.1-SNAPSHOT.jar:/app.jar
-    command: java -jar /app.jar
-
-  stats-server:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: stats-server
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./stats/stats-server/target/stats-server-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-    command: java -jar /app.jar
-    depends_on:
-      - stats-db
-
-  user-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: user-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/user-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-
-  category-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: category-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/category-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-
-  event-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: event-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/event-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-
-  request-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: request-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/request-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-
-  compilation-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: compilation-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/compilation-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
-
-  review-service:
-    image: eclipse-temurin:21-jdk-alpine
-    container_name: review-service
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./core/main-service/target/review-service-0.0.1-SNAPSHOT.jar:/app.jar
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main
-    command: java -jar /app.jar
-    depends_on:
-      - main-db
 
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
     container_name: kafka
     ports:
-      - "9092:9092"
-      - "9101:9101"
+      - "9092:9092" # for client connections
+      - "9101:9101" # JMX
     restart: unless-stopped
     environment:
       KAFKA_NODE_ID: 1
@@ -150,3 +31,7 @@ services:
                              --partitions 1 --replication-factor 1 --if-not-exists \
                              --bootstrap-server kafka:29092'"
     init: true
+
+
+  postgres:
+    image: postgres:16.1

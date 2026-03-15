@@ -1,0 +1,84 @@
+package ru.practicum.core.event.controller.external.admin;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.core.api.exception.model.ApiError;
+import ru.practicum.core.api.internal.event.dto.CategoryDto;
+import ru.practicum.core.event.dto.categories.NewCategoryDto;
+import ru.practicum.core.event.service.api.CategoryService;
+
+@Tag(name = "Admin: Категории", description = "API для работы с категориями")
+@RestController
+@RequestMapping("/admin/categories")
+@RequiredArgsConstructor
+@Slf4j
+public class AdminCategoriesController {
+    private final CategoryService categoryService;
+
+    @Operation(summary = "Создать новую категорию", description = "Обратите внимание: имя категории должно быть уникальным")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Категория добавлена",
+                    content = @Content(schema = @Schema(implementation = CategoryDto.class))),
+            @ApiResponse(responseCode = "400", description = "Запрос составлен некорректно",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "409", description = "Нарушение целостности данных",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @PostMapping
+    public ResponseEntity<CategoryDto> create(@RequestBody @Valid NewCategoryDto newCategoryDto) {
+        log.info("POST /admin/categories - Получен запрос на создание новой категории: {}", newCategoryDto);
+        CategoryDto created = categoryService.createCategory(newCategoryDto);
+        log.info("Категория с ID={} успешно создана", created.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @Operation(summary = "Удалить категорию", description = "Удаляет категорию по её идентификатору.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Категория успешно удалена"),
+            @ApiResponse(responseCode = "404", description = "Категория с указанным ID не найдена",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Void> delete(@PathVariable Long categoryId) {
+        log.info("DELETE /admin/categories/{} - Получен запрос на удаление категории", categoryId);
+        categoryService.deleteCategory(categoryId);
+        log.info("Категория с ID={} успешно удалена", categoryId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Обновить категорию", description = "Обновляет категорию по её идентификатору.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Категория успешно обновлена",
+                    content = @Content(schema = @Schema(implementation = CategoryDto.class))),
+            @ApiResponse(responseCode = "400", description = "Запрос составлен некорректно",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "409", description = "Нарушение целостности данных",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    @PatchMapping("/{categoryId}")
+    public ResponseEntity<CategoryDto> update(@PathVariable Long categoryId,
+                                              @RequestBody @Valid CategoryDto categoryDto) {
+        log.info("PATCH /admin/categories/{} - Получен запрос на обновление категории: {}", categoryId, categoryDto);
+        CategoryDto updated = categoryService.updateCategory(categoryId, categoryDto);
+        log.info("Категория с ID={} успешно обновлена", categoryId);
+        return ResponseEntity.ok(updated);
+    }
+}

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
-		<relativePath/>
+		<version>3.5.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<name>Explore With Me</name>
 
 	<modules>
-		<module>stats</module>
 		<module>core</module>
-        <module>infra</module>
-    </modules>
+		<module>infra</module>
+		<module>stats</module>
+	</modules>
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
@@ -28,115 +28,52 @@
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<spring.boot.version>3.3.0</spring.boot.version>
-		<postgresql.version>42.7.3</postgresql.version>
-		<h2.version>2.2.224</h2.version>
-		<hamcrest.version>2.2</hamcrest.version>
-		<lombok.version>1.18.32</lombok.version>
-		<mapstruct.version>1.5.5.Final</mapstruct.version>
-		<jakarta.validation.version>3.0.2</jakarta.validation.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 
-		<!-- Spring Cloud versions -->
-		<spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
+		<!-- Frameworks -->
+		<querydsl.version>5.1.0</querydsl.version>
+		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+		<spring-cloud.version>2025.0.0</spring-cloud.version>
+		<springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
 
-		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
-		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
-		<checkstyle.version>10.3</checkstyle.version>
-		<spotbugs.maven.plugin.version>4.8.5.0</spotbugs.maven.plugin.version>
-		<jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
+		<!-- Messaging -->
+		<avro.version>1.11.3</avro.version>
+		<kafka-clients.version>4.1.0</kafka-clients.version>
 
-		<!-- gRPC & Protobuf -->
+		<!-- gRPC -->
 		<grpc-spring-boot-starter.version>3.1.0.RELEASE</grpc-spring-boot-starter.version>
 		<protobuf.version>3.23.4</protobuf.version>
 		<grpc.version>1.63.0</grpc.version>
 
-		<!-- avro & kafka -->
-		<avro.version>1.11.3</avro.version>
-		<kafka-clients.version>3.6.1</kafka-clients.version>
-
-		<!-- Plugins -->
-		<protobuf-plugin.version>2.4.0</protobuf-plugin.version>
+		<!-- Build Tools -->
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<avro-maven-plugin.version>${avro.version}</avro-maven-plugin.version>
+		<protobuf-plugin.version>2.4.0</protobuf-plugin.version>
+
+		<!-- Doc -->
+		<springdoc-openapi-ui.version>1.8.0</springdoc-openapi-ui.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- Apache Avro -->
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>${spring.boot.version}</version>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro</artifactId>
+				<version>${avro.version}</version>
 			</dependency>
+
+			<!-- Kafka -->
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-				<version>${spring.boot.version}</version>
+				<groupId>org.apache.kafka</groupId>
+				<artifactId>kafka-clients</artifactId>
+				<version>${kafka-clients.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-data-jpa</artifactId>
-				<version>${spring.boot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-validation</artifactId>
-				<version>${spring.boot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>${postgresql.version}</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-test</artifactId>
-				<version>${spring.boot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.validation</groupId>
-				<artifactId>jakarta.validation-api</artifactId>
-				<version>${jakarta.validation.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hamcrest</groupId>
-				<artifactId>hamcrest</artifactId>
-				<version>${hamcrest.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-				<optional>true</optional>
-			</dependency>
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>${h2.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.mapstruct</groupId>
-				<artifactId>mapstruct</artifactId>
-				<version>${mapstruct.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mapstruct</groupId>
-				<artifactId>mapstruct-processor</artifactId>
-				<version>${mapstruct.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+
+			<!-- gRPC -->
 			<dependency>
 				<groupId>net.devh</groupId>
-				<artifactId>grpc-spring-boot-starter</artifactId>
+				<artifactId>grpc-client-spring-boot-starter</artifactId>
 				<version>${grpc-spring-boot-starter.version}</version>
 			</dependency>
 			<dependency>
@@ -154,52 +91,128 @@
 				<artifactId>grpc-protobuf</artifactId>
 				<version>${grpc.version}</version>
 			</dependency>
+
+			<!-- GateWay -->
 			<dependency>
-				<groupId>org.apache.avro</groupId>
-				<artifactId>avro</artifactId>
-				<version>${avro.version}</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+				<version>${spring-cloud-starter-gateway-server-webflux.version}</version>
+			</dependency>
+
+			<!-- MapStruct -->
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${org.mapstruct.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.kafka</groupId>
-				<artifactId>kafka-clients</artifactId>
-				<version>${kafka-clients.version}</version>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct-processor</artifactId>
+				<version>${org.mapstruct.version}</version>
+			</dependency>
+
+			<!-- QueryDSL -->
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-jpa</artifactId>
+				<classifier>jakarta</classifier>
+				<version>${querydsl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-apt</artifactId>
+				<classifier>jakarta</classifier>
+				<version>${querydsl.version}</version>
+			</dependency>
+
+			<!-- Spring Cloud BOM -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- OpenApi Doc -->
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-ui</artifactId>
+				<version>${springdoc-openapi-ui.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
 		<pluginManagement>
 			<plugins>
+				<!-- Spring Boot Maven Plugin: сборка и упаковка проекта -->
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven.compiler.plugin.version}</version>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
 					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-						<encoding>${project.build.sourceEncoding}</encoding>
+						<layers>
+							<enabled>true</enabled>
+						</layers>
+						<excludes>
+							<exclude>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+							</exclude>
+							<exclude>
+								<groupId>org.mapstruct</groupId>
+								<artifactId>mapstruct</artifactId>
+							</exclude>
+							<exclude>
+								<groupId>org.mapstruct</groupId>
+								<artifactId>mapstruct-processor</artifactId>
+							</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
+
+				<!-- QueryDSL APT Plugin: генерация QueryDSL классов -->
+				<plugin>
+					<groupId>com.mysema.maven</groupId>
+					<artifactId>apt-maven-plugin</artifactId>
+					<version>1.1.3</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>process</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>target/generated-sources/java</outputDirectory>
+								<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+							</configuration>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>com.querydsl</groupId>
+							<artifactId>querydsl-apt</artifactId>
+							<classifier>jakarta</classifier>
+							<version>${querydsl.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+
+				<!-- Surefire Plugin: запуск тестов с активным профилем test -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven.surefire.plugin.version}</version>
 					<configuration>
 						<systemPropertyVariables>
 							<spring.profiles.active>test</spring.profiles.active>
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
+
+				<!-- Checkstyle Plugin: проверка стиля кода -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>${maven.checkstyle.plugin.version}</version>
+					<version>3.1.2</version>
 					<configuration>
 						<configLocation>checkstyle.xml</configLocation>
 						<failOnViolation>true</failOnViolation>
@@ -218,14 +231,16 @@
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
 							<artifactId>checkstyle</artifactId>
-							<version>${checkstyle.version}</version>
+							<version>10.3</version>
 						</dependency>
 					</dependencies>
 				</plugin>
+
+				<!-- SpotBugs Plugin: анализ потенциальных багов в коде -->
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>${spotbugs.maven.plugin.version}</version>
+					<version>4.8.5.0</version>
 					<configuration>
 						<effort>Max</effort>
 						<threshold>High</threshold>
@@ -238,10 +253,12 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<!-- Jacoco Plugin: покрытие кода тестами -->
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${jacoco.maven.plugin.version}</version>
+					<version>0.8.12</version>
 					<configuration>
 						<output>file</output>
 					</configuration>
@@ -306,21 +323,12 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.avro</groupId>
-					<artifactId>avro-maven-plugin</artifactId>
-					<version>${avro-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>io.github.ascopes</groupId>
-					<artifactId>protobuf-maven-plugin</artifactId>
-					<version>${protobuf-plugin.version}</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<profiles>
+		<!-- Профиль для запуска проверки стиля кода -->
 		<profile>
 			<id>check</id>
 			<build>
@@ -344,6 +352,8 @@
 				</plugins>
 			</reporting>
 		</profile>
+
+		<!-- Профиль для сборки отчета о покрытии кода -->
 		<profile>
 			<id>coverage</id>
 			<build>
@@ -356,4 +366,5 @@
 			</build>
 		</profile>
 	</profiles>
+
 </project>

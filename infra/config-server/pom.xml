@@ -12,18 +12,25 @@
     <artifactId>config-server</artifactId>
 
     <dependencies>
+
+        <!-- Spring Cloud Config Server: основная зависимость -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
+
+        <!-- Eureka Client: регистрация в сервис-дисковере -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+        <!-- Actuator: для мониторинга и управления приложением -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>

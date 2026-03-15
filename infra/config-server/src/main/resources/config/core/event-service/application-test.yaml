@@ -1,0 +1,50 @@
+server:
+  port: 0
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:events_test_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: ewm-event-test
+    password: ewm-event-test
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+          jpa.JpaTransactionManager: DEBUG
+        transaction:
+          TransactionInterceptor: DEBUG
+      hibernate:
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: DEBUG
+
+grpc:
+  client:
+    analyzer:
+      address: 'discovery:///analyzer'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+    collector:
+      address: 'discovery:///collector'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
